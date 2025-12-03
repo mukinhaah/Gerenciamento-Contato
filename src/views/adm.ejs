@@ -1,11 +1,320 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tarefas</title>
+    <title>Painel Administrativo - Gerenciamento de Contatos</title>
+<style>
+
+    body {
+        margin: 0;
+        font-family: "Inter", Arial, Helvetica, sans-serif;
+        background: #eef1f5;
+        display: flex;
+        height: 100vh;
+        overflow-x: hidden;
+    }
+
+    .sidebar {
+        width: 250px;
+        background: linear-gradient(180deg, #223447, #1b2836);
+        color: white;
+        position: fixed;
+        top: 70px;
+        height: calc(100% - 70px);
+        padding-top: 25px;
+        transition: all 0.35s ease;
+        box-shadow: 4px 0 12px rgba(0,0,0,0.25);
+        z-index: 5;
+    }
+
+    .sidebar h2 {
+        text-align: center;
+        margin-bottom: 35px;
+        font-size: 22px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .sidebar a {
+        display: block;
+        padding: 15px 25px;
+        color: #e8eef5;
+        text-decoration: none;
+        font-size: 17px;
+        font-weight: 500;
+        transition: 0.3s;
+        border-left: 4px solid transparent;
+    }
+
+    .sidebar a:hover {
+        background: rgba(255,255,255,0.08);
+        border-left: 4px solid #1abc9c;
+        padding-left: 30px;
+    }
+
+    .submenu {
+        display: none;
+        background: #2c3e50;
+        margin-left: 20px;
+    }
+
+    .submenu a {
+        padding: 10px 25px;
+        font-size: 15px;
+        color: #e8eef5;
+        display: block;
+    }
+
+    .submenu a:hover {
+        background: rgba(255,255,255,0.1);
+        border-left: 4px solid #1abc9c;
+        padding-left: 30px;
+    }
+
+
+    .header {
+        position: fixed;
+        left: 0;
+        right: 0;
+        height: 70px;
+        background: linear-gradient(90deg, #16a085, #1abc9c);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        color: white;
+        font-size: 20px;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        z-index: 10;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 16px;
+    }
+
+    .logout-btn {
+        background: #e74c3c;
+        border: none;
+        padding: 10px 16px;
+        color: white;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        transition: 0.25s;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+
+    .logout-btn:hover {
+        background: #c0392b;
+        transform: translateY(-2px);
+    }
+
+    .content {
+        margin-top: 80px;
+        margin-left: 250px;
+        padding: 30px;
+        width: calc(100% - 250px);
+        transition: margin 0.35s ease;
+    }
+
+    .content h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #2c3e50;
+    }
+
+    .content p {
+        font-size: 18px;
+        color: #4d5c6a;
+        background: white;
+        padding: 18px 22px;
+        width: fit-content;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        transition: 0.3s;
+    }
+
+    .content p:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-260px);
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .content {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .menu-toggle {
+            display: block;
+            cursor: pointer;
+            margin-right: 10px;
+            font-size: 28px;
+        }
+    }
+
+    .menu-toggle {
+        display: none;
+    }
+
+    .form-card {
+    background: #ffffff;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    max-width: 500px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    }
+
+    .form-card input {
+        padding: 12px 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: 0.25s;
+    }
+
+    .form-card input:focus {
+        border-color: #1abc9c;
+        box-shadow: 0 0 8px rgba(26, 188, 156, 0.3);
+        outline: none;
+    }
+
+    .form-card button {
+        background: #1abc9c;
+        color: white;
+        border: none;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .form-card button:hover {
+        background: #16a085;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+
+</style>
 </head>
 <body>
-    <h1>Seja bem vindo(a) <%= user.name %> </h1>
+
+    <div class="sidebar" id="sidebar">
+        <h2>MENU</h2>
+        
+        <a href="#" onclick="toggleSubMenu('cadastrarSub')">
+            <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#e8eef5" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 11h3v2h-3v3h-2v-3H8v-2h3V8h2v5z"/></svg>
+            Cadastrar ▾
+        </a>
+        <div class="submenu" id="cadastrarSub">
+            <a href="#" onclick="showContent('cadastrar')">
+                <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#e8eef5" d="M19 3H5c-1.1 0-2 .9-2 2v14l4-4h12c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+                Cadastrar contato
+            </a>
+        </div>
+        
+        <a href="#" onclick="toggleSubMenu('listarSub')">
+            <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#e8eef5" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zm0-8h14V7H7v2z"/></svg>
+            Listar ▾
+        </a>
+        <div class="submenu" id="listarSub">
+            <a href="#" onclick="showContent('listar')">
+                <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#e8eef5" d="M5 4v16h14V4H5zm12 14H7V6h10v12z"/></svg>
+                Listar contatos
+            </a>
+        </div>
+        
+
+    </div>
+
+
+    <div class="header">
+        <span class="menu-toggle" onclick="toggleMenu()">☰</span>
+        <span><strong>Gerenciamento de Contatos</strong></span>
+
+        <div class="user-info">
+            <span>Seja bem vindo(a) <%= user.name %> </span>
+            <button class="logout-btn">Sair</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <h1>Painel Administrativo</h1>
+        
+       
+        <div id="homeSection">
+            <p>Bem-vindo ao sistema de Gerenciamento de Contatos.</p>
+        </div>
+    
+        
+        <div id="cadastrar" style="display:none;">
+            <h2>Cadastrar Contato</h2>
+            <form id="formCadastro" class="form-card">
+                <input type="text" name="nome" placeholder="Nome" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="tel" name="telefone" placeholder="Telefone" required>
+                <button type="submit">
+                    <svg width="16" height="16" viewBox="0 0 24 24" style="margin-right:8px;">
+                        <path fill="white" d="M17 3H7c-1.1 0-2 .9-2 2v14h14V5c0-1.1-.9-2-2-2zm0 14H7V5h10v12zM9 7h6v2H9V7zm0 4h6v2H9v-2z"/>
+                    </svg>
+                    Salvar Contato
+                </button>
+                
+            </form>
+        </div>
+    
+        <div id="listar" style="display:none;">
+            <h2>Listar Contatos</h2>
+            <p>Aqui aparecerão os contatos cadastrados.</p>
+        </div>
+    </div>
+    
+    
+
+    <script>
+    function toggleMenu() {
+        document.getElementById("sidebar").classList.toggle("active");
+    }
+
+    function toggleSubMenu(id) {
+        const submenu = document.getElementById(id);
+        submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+    }
+
+    function showContent(sectionId) {
+        // Esconder todas as seções
+        document.getElementById('homeSection').style.display = 'none';
+        document.getElementById('cadastrar').style.display = 'none';
+        document.getElementById('listar').style.display = 'none';
+
+        // Mostrar a seção selecionada
+        document.getElementById(sectionId).style.display = 'block';
+    }
+    </script>
+
+
 </body>
 </html>
